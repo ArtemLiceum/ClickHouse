@@ -9,6 +9,12 @@ readme = "README.md"
 python = "3.13.4"
 django = "^5.2.5"
 djangorestframework = "^3.16.1"
+clickhouse-connect = "^0.8.18"
+drf-spectacular = "^0.28.0"
+dotenv = "^0.9.9"
+psycopg2 = "^2.9.10"
+celery = "^5.5.3"
+redis = "^6.4.0"
 
 
 [build-system]

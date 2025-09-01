@@ -1,0 +1,69 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: shop_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: shop_clickhouse
+    restart: always
+    environment:
+      CLICKHOUSE_HOST: ${CLICKHOUSE_HOST}
+      CLICKHOUSE_PORT: ${CLICKHOUSE_PORT}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./clickhouse/init:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:latest
+    container_name: shop_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: .
+    container_name: shop_backend
+    restart: always
+    depends_on:
+      - postgres
+      - clickhouse
+      - redis
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: ["/app/entrypoint.sh"]
+
+  celery:
+    build: .
+    container_name: shop_celery
+    restart: always
+    depends_on:
+      - redis
+      - postgres
+      - clickhouse
+    command: [/app/entrypoint_celery.sh]
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
+  clickhouse_data:

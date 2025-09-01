@@ -5,6 +5,7 @@ __pycache__/
 
 # dotenv, virtualenv
 .env
+!.env.sample
 .venv
 venv/
 ENV/

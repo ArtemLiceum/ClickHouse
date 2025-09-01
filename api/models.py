@@ -40,4 +40,4 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING, related_name="orders")
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name="orders")
     amount = models.IntegerField()
-    discount = models.IntegerField(default=0)
+    discount = models.ForeignKey(Discount, on_delete=models.DO_NOTHING, related_name="orders")
